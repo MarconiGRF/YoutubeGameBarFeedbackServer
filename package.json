@@ -1,0 +1,32 @@
+{
+  "name": "ytgbfs",
+  "version": "1.0.0",
+  "description": "A simple HTTP to SMTP message sender.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarconiGRF/YoutubeGameBarFeedbackServer.git"
+  },
+  "keywords": [
+    "ytgbo",
+    "ytgbfs",
+    "node",
+    "express",
+    "smtp",
+    "http"
+  ],
+  "author": "Marconi Gomes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MarconiGRF/YoutubeGameBarFeedbackServer/issues"
+  },
+  "homepage": "https://github.com/MarconiGRF/YoutubeGameBarFeedbackServer#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemailer": "^6.4.10",
+    "winston": "^3.3.3"
+  }
+}

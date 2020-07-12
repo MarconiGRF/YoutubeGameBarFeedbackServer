@@ -1,0 +1,5 @@
+# User-related configs
+smtp-config.json
+
+# User-related Node Modules
+node_modules/*
