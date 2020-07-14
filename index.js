@@ -5,13 +5,13 @@
  * @author: Marconi Gomes (marconi.gomes7@gmail.com)
  */
 const winston = require('winston');
-const SMTPConnection = require('nodemailer/lib/smtp-connection');
+const nodemailer = require('nodemailer');
 const fs = require('fs');
 const SMTP_CONFIG = JSON.parse(fs.readFileSync('./smtp-config.json', 'utf8'));
 var YTGBFS = require('express')();
 var bodyParser = require('body-parser');
 var http = require('http').createServer(YTGBFS);
-var connection;
+var transport;
 
 
 /**
@@ -28,16 +28,20 @@ const logger = winston.createLogger({
 
 
 /**
- * Sets up the common configurations for a new SMTP Connection.
+ * Sets up the common transporter for SMTP Connections.
  */
 function setupMailingCommons() {
-  let options = {
-    'host': SMTP_CONFIG.SERVER_ADDRESS,
-    'port': SMTP_CONFIG.SERVER_PORT,
-    'secure': SMTP_CONFIG.SERVER_REQUIRES_SSL,
+  var transportOptions = {
+    host: SMTP_CONFIG.SERVER_ADDRESS,
+    port: SMTP_CONFIG.SERVER_PORT,
+    secure: SMTP_CONFIG.SERVER_REQUIRES_SSL,
+    auth: {
+      user: SMTP_CONFIG.USER,
+      pass: SMTP_CONFIG.PWD
+    }
   };
-  
-  connection = new SMTPConnection(options);
+  transport = nodemailer.createTransport(transportOptions);
+
   logger.log({ timestamp: new Date().toUTCString(), level: 'info', message: 'Mailing instance Ready.' });
 }
 
@@ -67,18 +71,18 @@ YTGBFS.use(bodyParser.json());
  * 500 INTERNAL SERVER ERROR - Something went wrong with the server. The status code is returned.
  */
 YTGBFS.post('/feedback', (request, response, next) => {
-  logger.log({timestamp: new Date().toUTCString(), level: 'http', message: 'Got POST search request...'});
+  logger.log({ timestamp: new Date().toUTCString(), level: 'http', message: 'Got feedback request...' });
 
   if (request.body.message !== undefined) {
-    sendFeedback(request.body.message).then( function() {
-      logger.log({ timestamp: new Date().toUTCString(), level: 'info', message: 'Feedback sent successfully.'});
+    sendFeedback(request.body.message).then(function () {
+      logger.log({ timestamp: new Date().toUTCString(), level: 'info', message: 'Request finished OK.' });
       response.sendStatus(200);
-    }).catch( function(errorData) {
-      next({message: '500 INTERNAL SERVER ERROR', details: errorData});
+    }).catch(function (errorData) {
+      next({ message: '500 INTERNAL SERVER ERROR', details: errorData });
     });
-  } 
+  }
   else {
-    next({message: '400 BAD REQUEST', details: 'Missing or malfunct body.'});
+    next({ message: '400 BAD REQUEST', details: 'Missing or malfunct body.' });
   }
 });
 
@@ -96,42 +100,23 @@ YTGBFS.use(errorHandler);
  */
 function sendFeedback(message) {
   return new Promise((resolve, reject) => {
-    var sendCallback = function(err, info) {
+    var sendCallback = function (err, info) {
       if (err) { reject("Send error! ---> " + err); }
       else {
-        connection.quit();
-        logger.log({ timestamp: new Date().toUTCString(), level: 'info', message: 'Connection closed OK.' });
+        logger.log({ timestamp: new Date().toUTCString(), level: 'info', message: 'Sending OK.' });
 
         resolve();
       }
     };
 
-    var loginCallback = function(err) {
-      if (err) { reject("Login error! ---> " + err); }
-      else {
-        logger.log({ timestamp: new Date().toUTCString(), level: 'info', message: 'Login OK.' });
+    var mailInfo = {
+      from: '"' + SMTP_CONFIG.MESSAGE_SENDER + '" <' + SMTP_CONFIG.SOURCE_MAIL_ADDRESS + '>',
+      to: SMTP_CONFIG.DESTINATION_MAIL_ADDRESS,
+      subject: SMTP_CONFIG.MESSAGE_SUBJECT,
+      text: message
+    }
 
-        let envelope = {
-          'from': SMTP_CONFIG.SOURCE_MAIL_ADDRESS,
-          'to': SMTP_CONFIG.DESTINATION_MAIL_ADDRESS
-        }
-        connection.send(envelope, message, sendCallback);
-      }
-    };
-    
-    let authenticationCallback = function() {
-      logger.log({ timestamp: new Date().toUTCString(), level: 'info', message: 'Connection OK.' });
-
-      let auth = {
-        'credentials': {
-          'user': SMTP_CONFIG.USER,
-          'pass': SMTP_CONFIG.PWD
-        }
-      }
-      connection.login(auth, loginCallback)
-    };
-
-    connection.connect(authenticationCallback);
+    transport.sendMail(mailInfo, sendCallback);
   })
 }
 
