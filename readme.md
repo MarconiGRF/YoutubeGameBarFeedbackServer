@@ -4,7 +4,7 @@ A simple server to implement [YTGBO](https://github.com/MarconiGRF/YoutubeGameBa
 ## Usage
 * 1: Clone this repository.  
 * 2: On repository's root, run `npm install`.  
-* 3: To run the server, use: `node index.js`.  
+* 3: To run the server, use: `node ytgbfs.js`.  
 * 4: Make any request on port `54521` with `/feedback` endpoint:
    * 4.1: A POST request with the following body is accepted:
      * 4.1.1: `{ "message": "Your feedback message here." }`. 
