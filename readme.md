@@ -1,5 +1,5 @@
 # Youtube GameBar Feedback Server
-A simple server to implement [YTGBO](https://github.com/MarconiGRF/YoutubeGameBarOverlay)'s Feedback system. It converts HTTP formatted request into SMTP message and sends it.
+A simple server to implement [YTGBO](https://github.com/MarconiGRF/YoutubeGameBarOverlay)'s Feedback system. It converts HTTP formatted request into SMTP message and sends it to the desired destination.
 
 ## Usage
 * 1: Clone this repository.  

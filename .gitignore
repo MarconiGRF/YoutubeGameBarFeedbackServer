@@ -1,5 +1,6 @@
 # User-related configs
 smtp-config.json
 
-# User-related Node Modules
+# User-related files
 node_modules/*
+*.log
