@@ -6,8 +6,7 @@
  */
 const winston = require('winston');
 const nodemailer = require('nodemailer');
-const fs = require('fs');
-const SMTP_CONFIG = JSON.parse(fs.readFileSync('./smtp-config.json', 'utf8'));
+const port = process.env.PORT || 3000;
 var YTGBFS = require('express')();
 var bodyParser = require('body-parser');
 var http = require('http').createServer(YTGBFS);
@@ -21,7 +20,6 @@ const logger = winston.createLogger({
   level: 'http',
   format: winston.format.prettyPrint(),
   transports: [
-    new winston.transports.File({ filename: 'status_feedback.log' }),
     new winston.transports.Console()
   ]
 });
@@ -32,12 +30,12 @@ const logger = winston.createLogger({
  */
 function setupMailingCommons() {
   var transportOptions = {
-    host: SMTP_CONFIG.SERVER_ADDRESS,
-    port: SMTP_CONFIG.SERVER_PORT,
-    secure: SMTP_CONFIG.SERVER_REQUIRES_SSL,
+    host: process.env.SERVER_ADDRESS,
+    port: process.env.SERVER_PORT,
+    secure: process.env.SERVER_REQUIRES_SSL,
     auth: {
-      user: SMTP_CONFIG.USER,
-      pass: SMTP_CONFIG.PWD
+      user: process.env.USER,
+      pass: process.env.PWD
     }
   };
   transport = nodemailer.createTransport(transportOptions);
@@ -49,7 +47,7 @@ function setupMailingCommons() {
 /**
  * Listens for connections on port 54521.
  */
-http.listen(54521, () => {
+http.listen(port, () => {
   setupMailingCommons();
   logger.log({ timestamp: new Date().toUTCString(), level: 'info', message: 'Server Ready.' });
 });
