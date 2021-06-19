@@ -4,7 +4,7 @@ A simple server to implement [YTGBO](https://github.com/MarconiGRF/YoutubeGameBa
 ## Usage
 * 1: Clone this repository.  
 * 2: On repository's root, run `npm install`.
-* 3: Rename `smtp-config-sample.json` to `smtp-config.json` and change its placeholder values to yours accordingy.
+* 3: Set the values of environment variables keys described on `smtp-config-sample.json`.
 * 4: To run the server, use: `node ytgbfs.js`.  
 * 5: Make any request on port `54521` with `/feedback` endpoint:
    * 5.1: A POST request with the following body is accepted:

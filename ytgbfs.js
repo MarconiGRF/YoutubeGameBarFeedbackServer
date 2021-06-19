@@ -35,7 +35,7 @@ function setupMailingCommons() {
     secure: process.env.SERVER_REQUIRES_SSL,
     auth: {
       user: process.env.USER,
-      pass: process.env.PWD
+      pass: process.env.PSWD
     }
   };
   transport = nodemailer.createTransport(transportOptions);
@@ -108,9 +108,9 @@ function sendFeedback(message) {
     };
 
     var mailInfo = {
-      from: '"' + SMTP_CONFIG.MESSAGE_SENDER + '" <' + SMTP_CONFIG.SOURCE_MAIL_ADDRESS + '>',
-      to: SMTP_CONFIG.DESTINATION_MAIL_ADDRESS,
-      subject: SMTP_CONFIG.MESSAGE_SUBJECT,
+      from: '"' + process.env.MESSAGE_SENDER + '" <' + process.env.SOURCE_MAIL_ADDRESS + '>',
+      to: process.env.DESTINATION_MAIL_ADDRESS,
+      subject: process.env.MESSAGE_SUBJECT,
       text: message
     }
 
