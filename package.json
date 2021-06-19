@@ -4,6 +4,7 @@
   "description": "A simple HTTP to SMTP message sender.",
   "main": "ytgbfs.js",
   "scripts": {
+    "start": "node ytgbfs.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
